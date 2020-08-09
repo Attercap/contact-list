@@ -1,9 +1,0 @@
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\bin\Debug\netcoreapp3.1\ContactList.Business.deps.json
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\bin\Debug\netcoreapp3.1\ContactList.Business.dll
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.AssemblyInfoInputs.cache
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.AssemblyInfo.cs
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\bin\Debug\netcoreapp3.1\ContactList.Business.pdb
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.dll
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.pdb
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.csproj.CoreCompileInputs.cache
-D:\Products\Git\Attercap\ContactList.Solution\ContactList.Business\obj\Debug\netcoreapp3.1\ContactList.Business.csprojAssemblyReference.cache
