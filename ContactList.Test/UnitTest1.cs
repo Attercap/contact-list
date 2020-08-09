@@ -31,8 +31,8 @@ namespace ContactList.Test
                     {
                         try
                         {
-                        //use the password generator to create a random username, we'll fill the user with that
-                        string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
+                            //use the password generator to create a random username, we'll fill the user with that
+                            string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
                             AppUserManager.CreateUser(new AppUser
                             {
                                 UserName = testname,
@@ -78,33 +78,37 @@ namespace ContactList.Test
             AppUser user = new AppUser
             {
                 UserName = testname,
+                Password = testname,
                 FirstName = "Bot",
                 LastName = "Builder",
-                EmailAddress = "test@tester.com",
-                Password = testname
+                EmailAddress = "test@tester.com"
             };
 
             AppUserReturn createReturn = AppUserManager.CreateUser(user);
 
             wasExceptionThrown = createReturn.HasErrors;
 
-            if(!wasExceptionThrown)
+            if (!wasExceptionThrown)
             {
-                DtoBase contactReturn = ContactManager.AddContact(new ContactRow
+                for (int i = 0; i < 100; i++)
                 {
-                    UserName = testname,
-                    FirstName = "first name",
-                    LastName = "last name",
-                    EmailAddress = "test@testing.com",
-                    StreetAddress1 = "street 1",
-                    StreetAddress2 = "",
-                    City = "Portland",
-                    StateProvince = "OR",
-                    PostalCode = "97232",
-                    Country = "USA"
-                });
+                    DtoBase contactReturn = ContactManager.AddContact(new ContactRow
+                    {
+                        UserName = testname,
+                        FirstName = "first name",
+                        LastName = "last name" + i.ToString(),
+                        EmailAddress = "test@testing.com",
+                        StreetAddress1 = "street 1",
+                        StreetAddress2 = "",
+                        City = "Portland",
+                        StateProvince = "OR",
+                        PostalCode = "97232",
+                        Country = "USA"
+                    });
 
-                wasExceptionThrown = contactReturn.HasErrors;
+                    wasExceptionThrown = contactReturn.HasErrors;
+                    if(wasExceptionThrown) { break; }
+                }
             }
 
             Assert.That(wasExceptionThrown, Is.False);
@@ -113,7 +117,7 @@ namespace ContactList.Test
         [Test]
         public void ContactCreationStressTest()
         {
-            if(string.IsNullOrWhiteSpace(AppSettings.ConnectionString))
+            if (string.IsNullOrWhiteSpace(AppSettings.ConnectionString))
             {
                 AppSettings.Initialize();
             }
@@ -130,7 +134,7 @@ namespace ContactList.Test
                         try
                         {
                             Random rnd = new Random();
-                            AppUser user = users[rnd.Next(0, users.Count-1)];
+                            AppUser user = users[rnd.Next(0, users.Count - 1)];
 
                             DtoBase contactReturn = ContactManager.AddContact(new ContactRow
                             {
