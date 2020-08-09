@@ -1,0 +1,34 @@
+<h2>Contact List</h2>
+
+<div class="container" *ngIf="authService.isLoggedIn()">
+  <p><strong>Total Contacts: {{this.contactCount}} </strong></p>
+
+  <p *ngIf="!contacts && this.contactCount > 0"><em>Loading contacts...</em></p>
+
+  <table class='table' *ngIf="contacts">
+    <thead>
+      <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Email Address</th>
+        <th>Last Modified</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of contacts | paginate: this.config; let i = index">
+        <td>{{ contact.lastName }}</td>
+        <td>{{ contact.firstName }}</td>
+        <td>{{ contact.emailAddress }}</td>
+        <td>{{ contact.lastModifiedFormatted }}</td>
+        <td><button class="btn" (click)="editContact(i)">Edit</button></td>
+        <td><button class="btn" (click)="deleteContact(i)">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+
+  <p><button class="btn" (click)="addContact()">Add New Contact</button></p>
+</div>

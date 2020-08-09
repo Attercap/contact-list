@@ -1,0 +1,9 @@
+<h2>Hello, {{(authService.userData.firstName)}}</h2>
+
+<div *ngIf="!authService.isLoggedIn()">
+  <p>Use the form below to log in.</p>
+</div>
+
+<app-log-in-form *ngIf="!authService.isLoggedIn()"></app-log-in-form>
+
+<app-contact-list *ngIf="authService.isLoggedIn()"></app-contact-list>

@@ -1,0 +1,36 @@
+<div class="container" *ngIf="!authService.isLoggedIn()">
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <div class="form-group">
+      <label for="username">User Name</label>
+      <input type="text" class="form-control" id="username" required pattern='^[a-zA-Z]{6,30}$' [(ngModel)]="model.username" name="username" #username="ngModel" placeholder="User Name">
+      <div class="alert alert-danger" *ngIf="username.invalid">
+        Must be alpha-only string of 6-30 letters.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" required [(ngModel)]="model.password" #password="ngModel" name="password" placeholder="Password">
+      <div class="alert alert-danger" *ngIf="password.invalid">
+        Password is required.
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success" [disabled]="!loginForm.form.valid">Submit</button>
+
+    <div class="alert alert-danger" *ngIf="loginForm.submitted && !authService.success">
+      {{authService.message}}
+    </div>
+
+    <div>
+      <a [routerLink]='["/register"]'>
+        No account? Click here to register.
+      </a>
+    </div>
+
+  </form>
+</div>
+
+<div *ngIf="authService.isLoggedIn()">
+  <p>You have successfully logged in. Please use the menu at the top of the page.</p>
+</div>

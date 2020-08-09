@@ -1,0 +1,9 @@
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\bin\Release\netcoreapp3.1\ContactList.Api.deps.json
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\bin\Release\netcoreapp3.1\ContactList.Api.dll
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\bin\Release\netcoreapp3.1\ContactList.Api.pdb
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.csprojAssemblyReference.cache
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.AssemblyInfoInputs.cache
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.AssemblyInfo.cs
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.csproj.CoreCompileInputs.cache
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.dll
+D:\Products\Git\Attercap\ContactList.Solution\ContactList.Api\obj\Release\netcoreapp3.1\ContactList.Api.pdb

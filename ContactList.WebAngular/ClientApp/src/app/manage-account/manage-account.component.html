@@ -1,0 +1,68 @@
+<h2>Manage Your Account</h2>
+
+<div class="container" *ngIf="authService.isLoggedIn()">
+  <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
+    <div class="form-group">
+      <!-- Dev note: while there is an input type email and email attribute, the validation often ignores the domain extension, accepting validation without it. Regex is a bit better. -->
+      <label for="email">Email Address</label>
+      <input type="text" class="form-control" id="email" required pattern='^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$' [(ngModel)]="model.email" name="email" #email="ngModel" placeholder="Email Address">
+      <div class="alert alert-danger" *ngIf="email.invalid">
+        Must be a valid email address.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="firstname">First Name</label>
+      <input type="text" class="form-control" id="firstname" required [(ngModel)]="model.firstname" #firstname="ngModel" name="firstname" placeholder="First Name">
+    </div>
+
+    <div class="form-group">
+      <label for="lastname">Last Name</label>
+      <input type="text" class="form-control" id="lastname" required [(ngModel)]="model.lastname" #lastname="ngModel" name="lastname" placeholder="Last Name">
+    </div>
+
+    <div class="form-group">
+      <strong>Update your Password</strong>
+    </div>
+
+    <div class="form-group">
+      <label for="oldpassword">Current Password</label>
+      <input type="password" class="form-control" id="oldpassword" [(ngModel)]="model.oldpassword" #password="ngModel" name="oldpassword" placeholder="Current Password">
+      <div class="alert alert-danger" *ngIf="isOldPasswordRequired()">
+        Current Password is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="newpassword">New Password</label>
+      <input type="password" class="form-control" id="newpassword" pattern="^(?=.*[^a-zA-Z])(?=.*[a-z])(?=.*[A-Z])\S{8,}$" [(ngModel)]="model.newpassword" #password="ngModel" name="newpassword" placeholder="New Password">
+      <div class="alert alert-danger" *ngIf="password.invalid">
+        Password must be at least eight characters, and have at least one of each of the following: lowercase letter, uppercase letter, number.<br />
+        Password cannot contain spaces.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmpassword">Confirm Password</label>
+      <input type="password" class="form-control" id="confirmpassword" [(ngModel)]="model.confirmpassword" #confirmpassword="ngModel" name="confirmpassword" placeholder="Confirm Password">
+      <div class="alert alert-danger" *ngIf="password.valid && !isValidConfirmationPassword()">
+        Confirm Password must match New Password.
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success" [disabled]="!accountForm.form.valid || isOldPasswordRequired() || !isValidConfirmationPassword()">Submit</button>
+
+    <div class="alert alert-danger" *ngIf="accountForm.submitted && !authService.success">
+      {{authService.message}}
+    </div>
+
+    <div class="alert alert-success" *ngIf="accountForm.submitted && authService.success">
+      Your account has been updated!<br/>
+    </div>
+
+  </form>
+</div>
+
+<div *ngIf="!authService.isLoggedIn()">
+  <p>You must <a [routerLink]='["/log-in"]'>Log In</a> to manage your account.</p>
+</div>
