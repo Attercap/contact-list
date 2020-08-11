@@ -18,5 +18,7 @@ This is a basic "proof of concept" project and while it does work, there may be 
 SQL is currently in-line for "ease of read"/code dissemination. In a working project would be Stored Proc.
 
 Next steps:
-Code clean-up/patternization of dtos (especially contact list /w proper messaging in case of error)
-Change username-based created contact tables to guid-based (with script to automate existing table updates)
+1. Code clean-up/patternization of dtos (especially contact list /w proper messaging in case of error)
+2. Change username-based created contact tables to guid-based (with script to automate existing table updates)
+
+(see feature/code-cleanup branch for next steps progress)
