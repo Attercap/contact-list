@@ -50,8 +50,7 @@
     <None Remove="ClientApp\dist\vendor-es5.js.map" />
     <None Remove="ClientApp\src\app\contact-edit\contact-edit.component.ts" />
     <None Remove="ClientApp\src\app\contact-list\contact-list.component.ts" />
-    <None Remove="ClientApp\src\services\api.result.ts" />
-    <None Remove="ClientApp\src\services\contact.service.ts" />
+    <None Remove="ClientApp\src\services\api.dto.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,8 +68,7 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\contact-list\contact-list.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\services\api.result.ts" />
-    <TypeScriptCompile Include="ClientApp\src\services\contact.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\services\api.dto.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

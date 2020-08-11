@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContactList.Business
 {
@@ -9,16 +8,26 @@ namespace ContactList.Business
     /// </summary>
     public class InputContactRecord
     {
-        public Guid ContactId { get; set; }
-        public string UserName { get; set; }
+        public Guid? ContactId { get; set; }
+        [Required]
+        public Guid UserId { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
         public string EmailAddress { get; set; }
+        [Required]
         public string StreetAddress1 { get; set; }
+        [Required]
         public string StreetAddress2 { get; set; }
+        [Required]
         public string City { get; set; }
+        [Required]
         public string StateProvince { get; set; }
+        [Required]
         public string PostalCode { get; set; }
+        [Required]
         public string Country { get; set; }
     }
 }

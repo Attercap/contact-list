@@ -26,7 +26,7 @@ namespace ContactList.Api
         // POST: api/AppUser/Update
         [HttpPost]
         [Route("Update")]
-        public DtoReturnBase Post([FromBody] InputUpdate appUser)
+        public DtoReturnBase Post([FromBody] InputUserUpdate appUser)
         {
             return AppUserManager.UpdateUser(appUser);
         }

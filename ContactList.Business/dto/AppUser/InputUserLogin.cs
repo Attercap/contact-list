@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ContactList.Business
 {
@@ -9,7 +7,9 @@ namespace ContactList.Business
     /// </summary>
     public class InputUserLogin
     {
+        [Required]
         public string UserName { get; set; }
+        [Required]
         public string Password { get; set; }
     }
 }

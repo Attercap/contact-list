@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.SqlParser.SqlCodeDom;
 using System;
 using System.Collections.Generic;
@@ -19,20 +20,23 @@ namespace ContactList.Business
         /// <returns>DtoBase with any error messaging</returns>
         public static DtoReturnBase AddContact(InputContactRecord contact)
         {
-            if(string.IsNullOrWhiteSpace(contact.UserName))
+            if(contact.UserId == Guid.Empty)
             {
                 return new DtoReturnBase
                 {
                     HasErrors = true,
-                    DtoMessage = "Usename missing from transaction, please log in."
+                    DtoMessage = "User missing from transaction, please log in."
                 };
             }
 
-            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
-
-            if (verifyTable.HasErrors)
+            string contactTableBaseString = GetContactTableBaseString(contact.UserId);
+            if(!ContactTableExists(contactTableBaseString))
             {
-                return verifyTable;
+                return new DtoReturnBase
+                {
+                    HasErrors = true,
+                    DtoMessage = "Contact table does not exist and could not be created."
+                };
             }
 
             try
@@ -41,7 +45,7 @@ namespace ContactList.Business
 
                 string insertContact = "insert into Contact_{0}(ContactId,FirstName,LastName,EmailAddress,StreetAddress1,StreetAddress2,City,StateProvince,PostalCode,Country,LastModified)" +
                     "values(@contactId,@firstName,@lastName,@emailAddress,@streetAddress1,@streetAddress2,@city,@stateProvince,@postalCode,@country,@lastModified)";
-                insertContact = string.Format(insertContact, contact.UserName);
+                insertContact = string.Format(insertContact, contactTableBaseString);
 
                 List<SqlParameter> insertParams = new List<SqlParameter>
                 {
@@ -90,20 +94,23 @@ namespace ContactList.Business
         /// <returns>DtoBase with any error messaging</returns>
         public static DtoReturnBase EditContact(InputContactRecord contact)
         {
-            if (string.IsNullOrWhiteSpace(contact.UserName))
+            if (contact.UserId == Guid.Empty || contact.ContactId == null || contact.ContactId == Guid.Empty)
             {
                 return new DtoReturnBase
                 {
                     HasErrors = true,
-                    DtoMessage = "Usename missing from transaction, please log in."
+                    DtoMessage = "Core data missing from transaction."
                 };
             }
 
-            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
-
-            if (verifyTable.HasErrors)
+            string contactTableBaseString = GetContactTableBaseString(contact.UserId);
+            if (!ContactTableExists(contactTableBaseString))
             {
-                return verifyTable;
+                return new DtoReturnBase
+                {
+                    HasErrors = true,
+                    DtoMessage = "Contact table does not exist and could not be created."
+                };
             }
 
             try
@@ -120,11 +127,11 @@ namespace ContactList.Business
                     " Country = @country," +
                     " LastModified = @lastModified" +
                     " where ContactId = @contactId";
-                updateContact = string.Format(updateContact, contact.UserName);
+                updateContact = string.Format(updateContact, contactTableBaseString);
 
                 List<SqlParameter> updateParams = new List<SqlParameter>
                 {
-                    new SqlParameter("@contactId",contact.ContactId),
+                    new SqlParameter("@contactId",(Guid)contact.ContactId),
                     new SqlParameter("@firstName",contact.FirstName),
                     new SqlParameter("@lastName",contact.LastName),
                     new SqlParameter("@emailAddress",contact.EmailAddress),
@@ -167,28 +174,31 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactRow with base contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoReturnBase DeleteContact(OutputContactRecord contact)
+        public static DtoReturnBase DeleteContact(InputContactDelete contact)
         {
-            if (string.IsNullOrWhiteSpace(contact.UserName))
+            if (contact.ContactId == Guid.Empty || contact.UserId == Guid.Empty)
             {
                 return new DtoReturnBase
                 {
                     HasErrors = true,
-                    DtoMessage = "Usename missing from transaction, please log in."
+                    DtoMessage = "Core data missing from transaction, please log in."
                 };
             }
 
-            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
-
-            if (verifyTable.HasErrors)
+            string contactTableBaseString = GetContactTableBaseString(contact.UserId);
+            if (!ContactTableExists(contactTableBaseString))
             {
-                return verifyTable;
+                return new DtoReturnBase
+                {
+                    HasErrors = true,
+                    DtoMessage = "Contact table does not exist and could not be created."
+                };
             }
 
             try
             {
                 string updateContact = "delete from Contact_{0} where ContactId = @contactId";
-                updateContact = string.Format(updateContact, contact.UserName);
+                updateContact = string.Format(updateContact, contactTableBaseString);
 
                 List<SqlParameter> updateParams = new List<SqlParameter>
                 {
@@ -227,23 +237,27 @@ namespace ContactList.Business
         /// <returns>DtoBase with error message or count of users in message</returns>
         public static DtoReturnBase GetContactCount(InputContactCountGet getter)
         {
-            if (string.IsNullOrWhiteSpace(getter.UserName))
+            if (getter.UserId == Guid.Empty)
             {
                 return new DtoReturnBase
                 {
                     HasErrors = true,
-                    DtoMessage = "Usename missing from transaction, please log in."
+                    DtoMessage = "User missing from transaction, please log in."
                 };
             }
 
-            DtoReturnBase verifyTable = VerifyContactTable(getter.UserName);
-            if(verifyTable.HasErrors)
+            string contactTableBaseString = GetContactTableBaseString(getter.UserId);
+            if (!ContactTableExists(contactTableBaseString))
             {
-                return verifyTable;
+                return new DtoReturnBase
+                {
+                    HasErrors = true,
+                    DtoMessage = "Contact table does not exist and could not be created."
+                };
             }
 
             string contactCount = "select count(*) from Contact_{0}";
-            contactCount = string.Format(contactCount, getter.UserName);
+            contactCount = string.Format(contactCount, contactTableBaseString);
 
             return new DtoReturnBase
             {
@@ -259,9 +273,15 @@ namespace ContactList.Business
         /// <returns>List of found ContactRow objects</returns>
         public static DtoReturnObject<List<OutputContactRecord>> GetContacts(InputContactListSelect getter)
         {
-            if (string.IsNullOrWhiteSpace(getter.UserName))
+            if (getter.UserId == Guid.Empty)
             {
-                return new DtoReturnObject<List<OutputContactRecord>>(true, "Usename missing from transaction, please log in.", null);
+                return new DtoReturnObject<List<OutputContactRecord>>(true, "User missing from transaction, please log in.", null);
+            }
+
+            string contactTableBaseString = GetContactTableBaseString(getter.UserId);
+            if (!ContactTableExists(contactTableBaseString))
+            {
+                return new DtoReturnObject<List<OutputContactRecord>>(true, "Contact table does not exist and could not be created.", null);
             }
 
             List<OutputContactRecord> contacts = new List<OutputContactRecord>();
@@ -273,7 +293,7 @@ namespace ContactList.Business
                 " and RowNum <= {2}" +
                 " order by RowNum";
 
-            contactSelect = string.Format(contactSelect, getter.UserName, (((getter.PageNumber - 1) * getter.RowsPerPage) + 1).ToString(), ((getter.PageNumber) * getter.RowsPerPage).ToString());
+            contactSelect = string.Format(contactSelect, contactTableBaseString, (((getter.PageNumber - 1) * getter.RowsPerPage) + 1).ToString(), ((getter.PageNumber) * getter.RowsPerPage).ToString());
 
             try
             {
@@ -311,34 +331,36 @@ namespace ContactList.Business
         /// <summary>
         /// Verifies Contact Table exists; adds some minor weight to methods but ensures fewer errors
         /// </summary>
-        /// <param name="username">string username of user</param>
-        /// <returns>DtoBase with any pertinent messaging in case of error</returns>
-        internal static DtoReturnBase VerifyContactTable(string username)
+        /// <param name="contactTableBaseName">string table basename</param>
+        /// <returns>bool of success/failure</returns>
+        internal static bool ContactTableExists(string contactTableBaseName)
         {
             string checkTableExists = "select count(*) from INFORMATION_SCHEMA.TABLES where TABLE_NAME = N'Contact_'+@username";
             List<SqlParameter> checkTableParams = new List<SqlParameter>
             {
-                    new SqlParameter("@userName", username)
+                    new SqlParameter("@userName", contactTableBaseName)
             };
 
             if (DataConnection.ExecuteScalarInt(checkTableExists, checkTableParams) == 0)
             {
-                return CreateContactTable(username);
+                return CreateContactTable(contactTableBaseName);
             }
 
-            return new DtoReturnBase
-            {
-                HasErrors = false
-            };
+            return false;
         }
 
         /// <summary>
         /// Creates the custom contact table for a user
         /// </summary>
-        /// <param name="username">string username</param>
-        /// <returns>DtoBase with any pertinent messaging in case of error</returns>
-        internal static DtoReturnBase CreateContactTable(string username)
+        /// <param name="contactTableBaseName">string of contact table extension</param>
+        /// <returns>bool of success/failure</returns>
+        internal static bool CreateContactTable(string contactTableBaseName)
         {
+            if (string.IsNullOrWhiteSpace(contactTableBaseName))
+            {
+                return false;
+            }
+
             string createtable = "CREATE TABLE [dbo].[Contact_{0}](" +
                 "[ContactId][uniqueidentifier] NOT NULL," +
                 "[FirstName] [nvarchar](256) NOT NULL," +
@@ -357,20 +379,42 @@ namespace ContactList.Business
                     ")WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]" +
                 ") ON[PRIMARY]";
 
-            createtable = string.Format(createtable, username);
+            createtable = string.Format(createtable, contactTableBaseName);
             if (!DataConnection.ExecuteNonQuery(createtable, new List<SqlParameter>()))
             {
-                return new DtoReturnBase
-                {
-                    HasErrors = true,
-                    DtoMessage = "Error createing contact table. Contacts cannot be saved. Please contact an administrator."
-                };
+                return false;
             }
 
-            return new DtoReturnBase
+            return true;
+        }
+
+        /// <summary>
+        /// Creates the custom contact table for a user
+        /// </summary>
+        /// <param name="userId">Guid of user Id</param>
+        /// <returns>bool of success/failure</returns>
+        internal static bool CreateContactTable(Guid userId)
+        {
+            string contactTableBaseName = GetContactTableBaseString(userId);
+            return CreateContactTable(contactTableBaseName);
+        }
+
+        /// <summary>
+        /// Derives the user's custom contact table name extenstion string from a guid
+        /// </summary>
+        /// <param name="userId">Guid of user's Id</param>
+        /// <returns>string of stripped and lowered characters</returns>
+        internal static string GetContactTableBaseString(Guid userId)
+        {
+            try
             {
-                HasErrors = false
-            };
+                return userId.ToString().ToLower().Replace("-", string.Empty);
+            }
+            catch (Exception ex)
+            {
+                ErrorLog.LogError(ex);
+                return string.Empty;
+            }
         }
     }
 }

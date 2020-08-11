@@ -94,7 +94,6 @@ namespace ContactList.Test
                 {
                     DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                     {
-                        UserName = testname,
                         FirstName = "first name",
                         LastName = "last name" + i.ToString(),
                         EmailAddress = "test@testing.com",
@@ -122,7 +121,7 @@ namespace ContactList.Test
                 AppSettings.Initialize();
             }
 
-            List<InputUserRegister> users = AppUserManager.GetUsers(100);
+            List<OutputUserBase> users = AppUserManager.GetUsers(100);
 
             bool wasExceptionThrown = false;
             var threads = new Thread[users.Count];
@@ -134,11 +133,10 @@ namespace ContactList.Test
                         try
                         {
                             Random rnd = new Random();
-                            InputUserRegister user = users[rnd.Next(0, users.Count - 1)];
+                            OutputUserBase user = users[rnd.Next(0, users.Count - 1)];
 
                             DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                             {
-                                UserName = user.UserName,
                                 FirstName = "first name",
                                 LastName = "last name",
                                 EmailAddress = "test@testing.com",

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { HttpClient } from '@angular/common/http';
-import { ApiResult } from '../../services/api.result';
-import { ContactRow } from '../../services/contact.service';
+import { ApiDto } from '../../services/api.dto';
 import { environment } from '../../environments/environment';
 import { Router } from "@angular/router";
 
@@ -15,14 +14,14 @@ export class ContactEditComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public router: Router,
-    public currentContact: ContactRow,
+    public currentContact: ApiDto.ContactInputUpdate,
     private http: HttpClient
   ) {
     this.authService = authService;
     if (sessionStorage.getItem('currentContact') != null) {
       this.currentContact = JSON.parse(sessionStorage.getItem('currentContact'));
     } else {
-      this.currentContact = new ContactRow();
+      this.currentContact = new ApiDto.ContactInputUpdate(null,this.authService.userData.userId,'','','','','','','','','');
     }
   }
 
@@ -59,7 +58,7 @@ export class ContactEditComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    this.currentContact.userName = this.authService.userData.userName;
+    this.currentContact.userId = this.authService.userData.userId;
     this.currentContact.firstName = this.model.firstname;
     this.currentContact.lastName = this.model.lastname;
     this.currentContact.emailAddress = this.model.emailaddress;
@@ -69,7 +68,7 @@ export class ContactEditComponent implements OnInit {
     this.currentContact.stateProvince = this.model.stateprovince;
     this.currentContact.postalCode = this.model.postalcode;
     this.currentContact.country = this.model.country;
-    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/AddEdit', this.currentContact).subscribe(res => {
+    this.http.post<ApiDto.OutputBase>(environment.apiUrl + 'Contact/AddEdit', this.currentContact).subscribe(res => {
       this.success = !res.hasErrors;
       this.message = res.dtoMessage;
 

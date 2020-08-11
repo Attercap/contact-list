@@ -2,7 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from "@angular/router";
 import { environment } from '../environments/environment';
-import { ApiResult } from './api.result';
+import { ApiDto } from './api.dto';
 
 @Injectable()
 
@@ -31,20 +31,20 @@ export class AuthService {
     this.success = false;
     this.message = "Processing...";
     var utcOffset = this.getUtcOffset();
-    var params = { username: username, password: password, utcoffset: utcOffset }
+    var loginParams = new ApiDto.UserInputLogin(username, password);
 
-    this.http.post<ApiResult.ApiReturnUser>(
+    this.http.post<ApiDto.UserOutputBase>(
       environment.apiUrl + 'AppUser/Login',
-      params
+      loginParams
     ).subscribe(res => {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.responseObject.userId;
-        this.userData.userName = res.responseObject.userName.toLowerCase();
-        this.userData.email = res.responseObject.emailAddress;
-        this.userData.firstName = res.responseObject.firstName;
-        this.userData.lastName = res.responseObject.lastName;
+        this.userData.userId = res.userObject.userId;
+        this.userData.userName = res.userObject.userName.toLowerCase();
+        this.userData.email = res.userObject.emailAddress;
+        this.userData.firstName = res.userObject.firstName;
+        this.userData.lastName = res.userObject.lastName;
         this.userData.utcOffset = utcOffset;
  
         sessionStorage.setItem('user', JSON.stringify(this.userData));
@@ -73,20 +73,21 @@ export class AuthService {
     this.success = false;
     this.message = "Processing...";
     var utcOffset = this.getUtcOffset();
-    var params = { userName: username, password: password, emailaddress: email, firstName: firstname, lastName: lastname, utcoffset: utcOffset }
 
-    this.http.post<ApiResult.ApiReturnUser>(
+    var registerParams = new ApiDto.UserInputRegistration(username, email, firstname, lastname, password);
+
+    this.http.post<ApiDto.UserOutputBase>(
       environment.apiUrl + 'AppUser/Register',
-      params
+      registerParams
     ).subscribe(res => {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.responseObject.userId;
-        this.userData.userName = res.responseObject.userName.toLowerCase();
-        this.userData.email = res.responseObject.emailAddress;
-        this.userData.firstName = res.responseObject.firstName;
-        this.userData.lastName = res.responseObject.lastName;
+        this.userData.userId = res.userObject.userId;
+        this.userData.userName = res.userObject.userName.toLowerCase();
+        this.userData.email = res.userObject.emailAddress;
+        this.userData.firstName = res.userObject.firstName;
+        this.userData.lastName = res.userObject.lastName;
         this.userData.utcOffset = utcOffset;
         sessionStorage.setItem('user', JSON.stringify(this.userData));
         this.router.navigate(['/']);
@@ -104,11 +105,12 @@ export class AuthService {
   update(email, firstname, lastname, oldpassword, newpassword) {
     this.success = false;
     this.message = "Processing...";
-    var params = { userId: this.userData.userId, emailaddress: email, firstName: firstname, lastName: lastname, oldpassword: oldpassword, password: newpassword }
 
-    this.http.post<ApiResult.ApiReturnUser>(
+    var updateParams = new ApiDto.UserInputUpdate(this.userData.userId, email, firstname, lastname, oldpassword, newpassword);
+
+    this.http.post<ApiDto.OutputBase>(
       environment.apiUrl + 'AppUser/Update',
-      params
+      updateParams
     ).subscribe(res => {
       this.success = !res.hasErrors;
       if (this.success) {

@@ -33,14 +33,14 @@ namespace ContactList.Business
                 }
 
 
-                user.UserId = Guid.NewGuid();
+                Guid userId = Guid.NewGuid();
 
                 string insertUser = "insert into AppUser([UserId],[UserName],[Password],[EmailAddress],[FirstName],[LastName],[CreateDate],[LastLogin]) " +
                     "values(@userId,@userName,@password,@emailAddress,@firstName,@lastName,@createDate,@lastLogin)";
 
                 List<SqlParameter> parameters = new List<SqlParameter>
                 {
-                    new SqlParameter("@userId", user.UserId),
+                    new SqlParameter("@userId", userId),
                     new SqlParameter("@userName", user.UserName),
                     new SqlParameter("@password", StringUtil.HashPassword(user.Password)),
                     new SqlParameter("@emailAddress", user.EmailAddress),
@@ -52,11 +52,9 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteNonQuery(insertUser, parameters))
                 {
-                    DtoReturnBase tableCreate = ContactManager.CreateContactTable(user.UserName);
-
-                    if (tableCreate.HasErrors)
+                    if(!ContactManager.CreateContactTable(userId))
                     {
-                        return new DtoReturnObject<OutputUserBase>(tableCreate.HasErrors, tableCreate.DtoMessage, null);
+                        return new DtoReturnObject<OutputUserBase>(true, "An erroc occured. You are able to log in but not save contacts.", null);
                     }
                 }
                 else
@@ -67,7 +65,7 @@ namespace ContactList.Business
                 return new DtoReturnObject<OutputUserBase>(false, string.Empty,
                     new OutputUserBase
                     {
-                        UserId = user.UserId,
+                        UserId = userId,
                         UserName = user.UserName,
                         EmailAddress = user.EmailAddress,
                         FirstName = user.FirstName,
@@ -146,7 +144,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">AppUser object</param>
         /// <returns>DtoBase of success/fail with message</returns>
-        public static DtoReturnBase UpdateUser(InputUpdate user)
+        public static DtoReturnBase UpdateUser(InputUserUpdate user)
         {
             try
             {
@@ -157,6 +155,8 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteScalarInt(checkUser, checkParms) > 0)
                 {
+                    //TODO: verify oldpassword is correct before updating new password
+
                     List<SqlParameter> updateParams = new List<SqlParameter>
                     {
                         new SqlParameter("@emailAddress", user.EmailAddress),
@@ -170,10 +170,10 @@ namespace ContactList.Business
                         " ,[FirstName] = @firstName" +
                         " ,[LastName] = @lastName";
 
-                    if (!string.IsNullOrEmpty(user.Password))
+                    if (!string.IsNullOrEmpty(user.NewPassword))
                     {
                         updateUser += " ,[Password] = @password";
-                        updateParams.Add(new SqlParameter("@password", StringUtil.HashPassword(user.Password)));
+                        updateParams.Add(new SqlParameter("@password", StringUtil.HashPassword(user.NewPassword)));
                     }
 
                     updateUser += " where UserId = @userId";
@@ -207,9 +207,9 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="userCount">int number of users to be returned</param>
         /// <returns>List of N AppUsers</returns>
-        public static List<InputUserRegister> GetUsers(int userCount)
+        public static List<OutputUserBase> GetUsers(int userCount)
         {
-            List<InputUserRegister> users = new List<InputUserRegister>();
+            List<OutputUserBase> users = new List<OutputUserBase>();
 
             try
             {
@@ -222,7 +222,7 @@ namespace ContactList.Business
                 {
                     foreach (DataRow row in dt.Rows)
                     {
-                        users.Add(new InputUserRegister
+                        users.Add(new OutputUserBase
                         {
                             UserId = (Guid)row["UserId"],
                             UserName = (string)row["UserName"]

@@ -41,7 +41,7 @@ namespace ContactList.Api
         // POST: api/Contact/Delete
         [HttpPost]
         [Route("Delete")]
-        public DtoReturnBase Post([FromBody] OutputContactRecord contact)
+        public DtoReturnBase Post([FromBody] InputContactDelete contact)
         {
             return ContactManager.DeleteContact(contact);
         }

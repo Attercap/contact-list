@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { HttpClient } from '@angular/common/http';
-import { ApiResult } from '../../services/api.result';
-import { ContactRow } from '../../services/contact.service';
+import { ApiDto } from '../../services/api.dto';
 import { environment } from '../../environments/environment';
 import { Router } from "@angular/router";
 
@@ -12,7 +11,7 @@ import { Router } from "@angular/router";
 })
 export class ContactListComponent implements OnInit {
   public contactCount: number;
-  public contacts: ContactRow[];
+  public contacts: ApiDto.ContactOutputData[];
   public config: any;
 
   constructor(
@@ -34,8 +33,9 @@ export class ContactListComponent implements OnInit {
 
   initContacts() {
     if (this.authService.userData !== null && this.authService.userData.userId !== null) {
-      var params = { userName: this.authService.userData.userName };
-      this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/Count', params).subscribe(res => {
+      var getCountParams = new ApiDto.ContactInputGetCount(this.authService.userData.userId);
+
+      this.http.post<ApiDto.OutputBase>(environment.apiUrl + 'Contact/Count', getCountParams).subscribe(res => {
           if (!res.hasErrors) {
             this.contactCount = parseInt(res.dtoMessage);
             this.config.totalItems = this.contactCount;
@@ -50,9 +50,15 @@ export class ContactListComponent implements OnInit {
   }
 
   loadPagedContacts() {
-    var params = { userName: this.authService.userData.userName, utcOffset: this.authService.userData.utcOffset, rowsPerPage: this.config.itemsPerPage, pageNumber: this.config.currentPage };
-    this.http.post<ContactRow[]>(environment.apiUrl + 'Contact/List', params).subscribe(res => {
-        this.contacts = res;
+    var pagedContactParams = new ApiDto.ContactInputGetList(this.authService.userData.userId, this.authService.userData.utcOffset, this.config.currentPage, this.config.itemsPerPage);
+    this.http.post<ApiDto.ContactOutputBase>(environment.apiUrl + 'Contact/List', pagedContactParams).subscribe(res => {
+      if (!res.hasErrors) {
+        this.contacts = res.contactList;
+      }
+      else {
+        alert(res.dtoMessage);
+      }
+
     },
       error => console.error(error)
     );
@@ -70,14 +76,14 @@ export class ContactListComponent implements OnInit {
   }
 
   addContact() {
-    sessionStorage.setItem('currentContact', JSON.stringify(new ContactRow()));
+    sessionStorage.setItem('currentContact', JSON.stringify(new ApiDto.ContactInputUpdate(null, this.authService.userData.userId,'','','','','','','','','')));
     this.router.navigate(['/contact-add']);
   }
 
   deleteContact(i) {
     var contact = this.contacts[i];
-    contact.userName = this.authService.userData.userName;
-    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/Delete', contact).subscribe(res => {
+    var deleteParams = new ApiDto.ContactInputDelete(contact.contactId, this.authService.userData.userId);
+    this.http.post<ApiDto.OutputBase>(environment.apiUrl + 'Contact/Delete', deleteParams).subscribe(res => {
       if (res.hasErrors) {
         alert(res.dtoMessage);
       } else {
@@ -87,11 +93,4 @@ export class ContactListComponent implements OnInit {
       error => console.error(error)
     );
   }
-}
-
-export class ContactGetter {
-  userName: string;
-  utcOffset: number;
-  pageNumber: number;
-  rowsPerPage: number;
 }
