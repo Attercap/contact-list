@@ -17,18 +17,18 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoBase AddContact(ContactAddEdit contact)
+        public static DtoReturnBase AddContact(ContactAddEdit contact)
         {
             if(string.IsNullOrWhiteSpace(contact.UserName))
             {
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "Usename missing from transaction, please log in."
                 };
             }
 
-            DtoBase verifyTable = VerifyContactTable(contact.UserName);
+            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
 
             if (verifyTable.HasErrors)
             {
@@ -60,7 +60,7 @@ namespace ContactList.Business
 
                 if(!DataConnection.ExecuteNonQuery(insertContact,insertParams))
                 {
-                    return new DtoBase
+                    return new DtoReturnBase
                     {
                         HasErrors = true,
                         DtoMessage = "Error saving contact row."
@@ -70,14 +70,14 @@ namespace ContactList.Business
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "A general error occured creating the contact row."
                 };
             }
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false
             };          
@@ -88,18 +88,18 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoBase EditContact(ContactAddEdit contact)
+        public static DtoReturnBase EditContact(ContactAddEdit contact)
         {
             if (string.IsNullOrWhiteSpace(contact.UserName))
             {
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "Usename missing from transaction, please log in."
                 };
             }
 
-            DtoBase verifyTable = VerifyContactTable(contact.UserName);
+            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
 
             if (verifyTable.HasErrors)
             {
@@ -139,7 +139,7 @@ namespace ContactList.Business
 
                 if (!DataConnection.ExecuteNonQuery(updateContact, updateParams))
                 {
-                    return new DtoBase
+                    return new DtoReturnBase
                     {
                         HasErrors = true,
                         DtoMessage = "Error saving contact row."
@@ -149,14 +149,14 @@ namespace ContactList.Business
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "A general error occured editing the contact row."
                 };
             }
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false
             };
@@ -167,18 +167,18 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactRow with base contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoBase DeleteContact(ContactRow contact)
+        public static DtoReturnBase DeleteContact(ContactRow contact)
         {
             if (string.IsNullOrWhiteSpace(contact.UserName))
             {
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "Usename missing from transaction, please log in."
                 };
             }
 
-            DtoBase verifyTable = VerifyContactTable(contact.UserName);
+            DtoReturnBase verifyTable = VerifyContactTable(contact.UserName);
 
             if (verifyTable.HasErrors)
             {
@@ -197,7 +197,7 @@ namespace ContactList.Business
 
                 if (!DataConnection.ExecuteNonQuery(updateContact, updateParams))
                 {
-                    return new DtoBase
+                    return new DtoReturnBase
                     {
                         HasErrors = true,
                         DtoMessage = "Error removing contact row."
@@ -207,14 +207,14 @@ namespace ContactList.Business
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "A general error occured removing the contact row."
                 };
             }
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false
             };
@@ -225,18 +225,18 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object for data transfer of username</param>
         /// <returns>DtoBase with error message or count of users in message</returns>
-        public static DtoBase GetContactCount(CountGet getter)
+        public static DtoReturnBase GetContactCount(CountGet getter)
         {
             if (string.IsNullOrWhiteSpace(getter.UserName))
             {
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "Usename missing from transaction, please log in."
                 };
             }
 
-            DtoBase verifyTable = VerifyContactTable(getter.UserName);
+            DtoReturnBase verifyTable = VerifyContactTable(getter.UserName);
             if(verifyTable.HasErrors)
             {
                 return verifyTable;
@@ -245,7 +245,7 @@ namespace ContactList.Business
             string contactCount = "select count(*) from Contact_{0}";
             contactCount = string.Format(contactCount, getter.UserName);
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false,
                 DtoMessage = DataConnection.ExecuteScalarInt(contactCount, new List<SqlParameter>()).ToString()
@@ -257,8 +257,13 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object with desired params</param>
         /// <returns>List of found ContactRow objects</returns>
-        public static List<ContactRow> GetContacts(ListSelect getter)
+        public static DtoReturnObject<List<ContactRow>> GetContacts(ListSelect getter)
         {
+            if (string.IsNullOrWhiteSpace(getter.UserName))
+            {
+                return new DtoReturnObject<List<ContactRow>>(true, "Usename missing from transaction, please log in.", null);
+            }
+
             List<ContactRow> contacts = new List<ContactRow>();
 
             string contactSelect = "select * from" +
@@ -297,9 +302,10 @@ namespace ContactList.Business
             } catch(Exception ex)
             {
                 ErrorLog.LogError(ex);
+                return new DtoReturnObject<List<ContactRow>>(true,"An error occured accessing your contacts, please contact administration.",null);
             }
 
-            return contacts;
+            return new DtoReturnObject<List<ContactRow>>(false, string.Empty, contacts);
         }
 
         /// <summary>
@@ -307,7 +313,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="username">string username of user</param>
         /// <returns>DtoBase with any pertinent messaging in case of error</returns>
-        internal static DtoBase VerifyContactTable(string username)
+        internal static DtoReturnBase VerifyContactTable(string username)
         {
             string checkTableExists = "select count(*) from INFORMATION_SCHEMA.TABLES where TABLE_NAME = N'Contact_'+@username";
             List<SqlParameter> checkTableParams = new List<SqlParameter>
@@ -320,7 +326,7 @@ namespace ContactList.Business
                 return CreateContactTable(username);
             }
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false
             };
@@ -331,7 +337,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="username">string username</param>
         /// <returns>DtoBase with any pertinent messaging in case of error</returns>
-        internal static DtoBase CreateContactTable(string username)
+        internal static DtoReturnBase CreateContactTable(string username)
         {
             string createtable = "CREATE TABLE [dbo].[Contact_{0}](" +
                 "[ContactId][uniqueidentifier] NOT NULL," +
@@ -354,14 +360,14 @@ namespace ContactList.Business
             createtable = string.Format(createtable, username);
             if (!DataConnection.ExecuteNonQuery(createtable, new List<SqlParameter>()))
             {
-                return new DtoBase
+                return new DtoReturnBase
                 {
                     HasErrors = true,
                     DtoMessage = "Error createing contact table. Contacts cannot be saved. Please contact an administrator."
                 };
             }
 
-            return new DtoBase
+            return new DtoReturnBase
             {
                 HasErrors = false
             };

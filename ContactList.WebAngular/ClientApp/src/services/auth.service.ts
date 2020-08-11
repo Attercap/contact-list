@@ -33,18 +33,18 @@ export class AuthService {
     var utcOffset = this.getUtcOffset();
     var params = { username: username, password: password, utcoffset: utcOffset }
 
-    this.http.post<ApiResult.ApiUser>(
+    this.http.post<ApiResult.ApiReturnUser>(
       environment.apiUrl + 'AppUser/Login',
       params
     ).subscribe(res => {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.userId;
-        this.userData.userName = res.userName.toLowerCase();
-        this.userData.email = res.emailAddress;
-        this.userData.firstName = res.firstName;
-        this.userData.lastName = res.lastName;
+        this.userData.userId = res.responseObject.userId;
+        this.userData.userName = res.responseObject.userName.toLowerCase();
+        this.userData.email = res.responseObject.emailAddress;
+        this.userData.firstName = res.responseObject.firstName;
+        this.userData.lastName = res.responseObject.lastName;
         this.userData.utcOffset = utcOffset;
  
         sessionStorage.setItem('user', JSON.stringify(this.userData));
@@ -75,18 +75,18 @@ export class AuthService {
     var utcOffset = this.getUtcOffset();
     var params = { userName: username, password: password, emailaddress: email, firstName: firstname, lastName: lastname, utcoffset: utcOffset }
 
-    this.http.post<ApiResult.ApiUser>(
+    this.http.post<ApiResult.ApiReturnUser>(
       environment.apiUrl + 'AppUser/Register',
       params
     ).subscribe(res => {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.userId;
-        this.userData.userName = res.userName.toLowerCase();
-        this.userData.email = res.emailAddress;
-        this.userData.firstName = res.firstName;
-        this.userData.lastName = res.lastName;
+        this.userData.userId = res.responseObject.userId;
+        this.userData.userName = res.responseObject.userName.toLowerCase();
+        this.userData.email = res.responseObject.emailAddress;
+        this.userData.firstName = res.responseObject.firstName;
+        this.userData.lastName = res.responseObject.lastName;
         this.userData.utcOffset = utcOffset;
         sessionStorage.setItem('user', JSON.stringify(this.userData));
         this.router.navigate(['/']);
@@ -106,7 +106,7 @@ export class AuthService {
     this.message = "Processing...";
     var params = { userId: this.userData.userId, emailaddress: email, firstName: firstname, lastName: lastname, oldpassword: oldpassword, password: newpassword }
 
-    this.http.post<ApiResult.ApiReturn>(
+    this.http.post<ApiResult.ApiReturnUser>(
       environment.apiUrl + 'AppUser/Update',
       params
     ).subscribe(res => {

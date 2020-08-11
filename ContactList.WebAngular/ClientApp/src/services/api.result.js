@@ -10,6 +10,15 @@ var ApiResult;
         return ApiReturn;
     }());
     ApiResult.ApiReturn = ApiReturn;
+    var ApiReturnUser = /** @class */ (function () {
+        function ApiReturnUser() {
+            this.hasErrors = true;
+            this.dtoMessage = 'Unknown error.';
+            this.responseObject = new ApiUser();
+        }
+        return ApiReturnUser;
+    }());
+    ApiResult.ApiReturnUser = ApiReturnUser;
     var ApiUser = /** @class */ (function () {
         function ApiUser() {
             this.userId = null;
@@ -17,8 +26,6 @@ var ApiResult;
             this.emailAddress = '';
             this.firstName = 'Unknown User';
             this.lastName = '';
-            this.hasErrors = true;
-            this.dtoMessage = 'Unknown error.';
         }
         return ApiUser;
     }());

@@ -84,7 +84,7 @@ namespace ContactList.Test
                 EmailAddress = "test@tester.com"
             };
 
-            AppUserReturn createReturn = AppUserManager.CreateUser(user);
+            DtoReturnObject<AppUserReturn> createReturn = AppUserManager.CreateUser(user);
 
             wasExceptionThrown = createReturn.HasErrors;
 
@@ -92,7 +92,7 @@ namespace ContactList.Test
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    DtoBase contactReturn = ContactManager.AddContact(new ContactAddEdit
+                    DtoReturnBase contactReturn = ContactManager.AddContact(new ContactAddEdit
                     {
                         UserName = testname,
                         FirstName = "first name",
@@ -136,7 +136,7 @@ namespace ContactList.Test
                             Random rnd = new Random();
                             Register user = users[rnd.Next(0, users.Count - 1)];
 
-                            DtoBase contactReturn = ContactManager.AddContact(new ContactAddEdit
+                            DtoReturnBase contactReturn = ContactManager.AddContact(new ContactAddEdit
                             {
                                 UserName = user.UserName,
                                 FirstName = "first name",

@@ -7,7 +7,7 @@ namespace ContactList.Business
     /// <summary>
     /// Data Transfer object following most user API calls
     /// </summary>
-    public class AppUserReturn : DtoBase
+    public class AppUserReturn
     {
         public Guid UserId { get; set; }
         public string UserName { get; set; }

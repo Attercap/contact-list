@@ -15,8 +15,8 @@ namespace ContactList.Business
         /// Creates user record in AppUser database and instantiates their custom contact table
         /// </summary>
         /// <param name="user">populated AppUser dto object</param>
-        /// <returns>AppUserReturn to populate user session informationt</returns>
-        public static AppUserReturn CreateUser(Register user)
+        /// <returns>DtoReturnObject with AppUserReturn to populate user session information</returns>
+        public static DtoReturnObject<AppUserReturn> CreateUser(Register user)
         {
             try
             {
@@ -29,11 +29,7 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteScalarInt(checkUser, checkParms) > 0)
                 {
-                    return new AppUserReturn
-                    {
-                        HasErrors = true,
-                        DtoMessage = "This UserName already exists in the system. Please try again."
-                    };
+                    return new DtoReturnObject<AppUserReturn>(true, "This User Name already exists in the system. Please try again.", null);
                 }
 
 
@@ -56,41 +52,32 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteNonQuery(insertUser, parameters))
                 {
-                    DtoBase tableCreate = ContactManager.CreateContactTable(user.UserName);
+                    DtoReturnBase tableCreate = ContactManager.CreateContactTable(user.UserName);
 
                     if (tableCreate.HasErrors)
                     {
-                        return (AppUserReturn)tableCreate;
+                        return new DtoReturnObject<AppUserReturn>(tableCreate.HasErrors, tableCreate.DtoMessage, null);
                     }
                 }
                 else
                 {
-                    return new AppUserReturn
-                    {
-                        HasErrors = true,
-                        DtoMessage = "Could not create user record."
-                    };
+                    return new DtoReturnObject<AppUserReturn>(true, "Could not create user record.", null);
                 }
 
-                return new AppUserReturn
-                {
-                    UserId = user.UserId,
-                    UserName = user.UserName,
-                    EmailAddress = user.EmailAddress,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    HasErrors = false
-                };
+                return new DtoReturnObject<AppUserReturn>(false, string.Empty,
+                    new AppUserReturn
+                    {
+                        UserId = user.UserId,
+                        UserName = user.UserName,
+                        EmailAddress = user.EmailAddress,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
+                    });
             }
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
-
-                return new AppUserReturn
-                {
-                    HasErrors = true,
-                    DtoMessage = "An unknown error occured, please contact support."
-                };
+                return new DtoReturnObject<AppUserReturn>(true, "An unknown error occured, please contact support.", null);
             }
         }
 
@@ -98,8 +85,8 @@ namespace ContactList.Business
         /// Verifies user/password and, if correct, updates last login date
         /// </summary>
         /// <param name="user">AppUserLogin object for user/pass string</param>
-        /// <returns>AppUserReturn to populate common session data</returns>
-        public static AppUserReturn LoginUser(AppUserLogin user)
+        /// <returns>DtoReturnObject with AppUserReturn to populate common session data</returns>
+        public static DtoReturnObject<AppUserReturn> LoginUser(AppUserLogin user)
         {
             try
             {
@@ -122,9 +109,7 @@ namespace ContactList.Business
                         UserName = (string)dt.Rows[0]["UserName"],
                         FirstName = (string)dt.Rows[0]["FirstName"],
                         LastName = (string)dt.Rows[0]["LastName"],
-                        EmailAddress = (string)dt.Rows[0]["EmailAddress"],
-                        HasErrors = false,
-                        DtoMessage = string.Empty
+                        EmailAddress = (string)dt.Rows[0]["EmailAddress"]
                     };
 
                     string loginUser = "update AppUser set LastLogin = @lastLogin where UserId = @userId";
@@ -135,32 +120,24 @@ namespace ContactList.Business
                         new SqlParameter("@userId", appUserReturn.UserId)
                     };
 
+
                     if (!DataConnection.ExecuteNonQuery(loginUser, loginParams))
                     {
-                        appUserReturn.HasErrors = true;
-                        appUserReturn.DtoMessage = "A minor error occurred updating your login date.";
+                        return new DtoReturnObject<AppUserReturn>(true, "A minor error occurred updating your login date.", null);
                     }
 
-                    return appUserReturn;
+                    return new DtoReturnObject<AppUserReturn>(false, string.Empty, appUserReturn);
                 }
                 else
                 {
-                    return new AppUserReturn
-                    {
-                        HasErrors = true,
-                        DtoMessage = "Your username/password combination is incorrect."
-                    };
+                    return new DtoReturnObject<AppUserReturn>(true, "Your username/password combination is incorrect.", null);
                 }
             }
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
 
-                return new AppUserReturn
-                {
-                    HasErrors = true,
-                    DtoMessage = "An unknown error occured, please contact support."
-                };
+                return new DtoReturnObject<AppUserReturn>(true, "An unknown error occured, please contact support.", null);
             }
         }
 
@@ -169,7 +146,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">AppUser object</param>
         /// <returns>DtoBase of success/fail with message</returns>
-        public static DtoBase UpdateUser(Update user)
+        public static DtoReturnBase UpdateUser(Update user)
         {
             try
             {
@@ -204,44 +181,29 @@ namespace ContactList.Business
 
                     if (DataConnection.ExecuteNonQuery(updateUser, updateParams))
                     {
-                        return new DtoBase
-                        {
-                            HasErrors = false
-                        };
+                        return new DtoReturnBase(false, string.Empty);
                     }
                     else
                     {
-                        return new DtoBase
-                        {
-                            HasErrors = true,
-                            DtoMessage = "Error updating information."
-                        };
+                        return new DtoReturnBase(true, "Error updating information.");
                     }
                 }
                 else
                 {
-                    return new AppUserReturn
-                    {
-                        HasErrors = true,
-                        DtoMessage = "Your user account cannot be found. Please log in again."
-                    };
+                    return new DtoReturnBase(true, "Your user account cannot be found. Please log in again.");
                 }
             }
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
 
-                return new AppUserReturn
-                {
-                    HasErrors = true,
-                    DtoMessage = "An unknown error occured, please contact support."
-                };
+                return new DtoReturnBase(true, "An unknown error occured, please contact support.");
             }
         }
 
 
         /// <summary>
-        /// Returns list of top N users, used for stress testing
+        /// Returns list of top N users, used for stress testing only
         /// </summary>
         /// <param name="userCount">int number of users to be returned</param>
         /// <returns>List of N AppUsers</returns>
