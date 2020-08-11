@@ -34,7 +34,7 @@ export class AuthService {
     var params = { username: username, password: password, utcoffset: utcOffset }
 
     this.http.post<ApiResult.ApiUser>(
-      environment.apiUrl + 'Login',
+      environment.apiUrl + 'AppUser/Login',
       params
     ).subscribe(res => {
       this.success = !res.hasErrors;
@@ -76,7 +76,7 @@ export class AuthService {
     var params = { userName: username, password: password, emailaddress: email, firstName: firstname, lastName: lastname, utcoffset: utcOffset }
 
     this.http.post<ApiResult.ApiUser>(
-      environment.apiUrl + 'Registration',
+      environment.apiUrl + 'AppUser/Register',
       params
     ).subscribe(res => {
       this.success = !res.hasErrors;
@@ -107,7 +107,7 @@ export class AuthService {
     var params = { userId: this.userData.userId, emailaddress: email, firstName: firstname, lastName: lastname, oldpassword: oldpassword, password: newpassword }
 
     this.http.post<ApiResult.ApiReturn>(
-      environment.apiUrl + 'UpdateUser',
+      environment.apiUrl + 'AppUser/Update',
       params
     ).subscribe(res => {
       this.success = !res.hasErrors;

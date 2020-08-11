@@ -69,7 +69,7 @@ export class ContactEditComponent implements OnInit {
     this.currentContact.stateProvince = this.model.stateprovince;
     this.currentContact.postalCode = this.model.postalcode;
     this.currentContact.country = this.model.country;
-    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'ContactEdit', this.currentContact).subscribe(res => {
+    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/AddEdit', this.currentContact).subscribe(res => {
       this.success = !res.hasErrors;
       this.message = res.dtoMessage;
 

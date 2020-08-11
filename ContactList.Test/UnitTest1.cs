@@ -33,7 +33,7 @@ namespace ContactList.Test
                         {
                             //use the password generator to create a random username, we'll fill the user with that
                             string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
-                            AppUserManager.CreateUser(new AppUser
+                            AppUserManager.CreateUser(new Register
                             {
                                 UserName = testname,
                                 Password = testname,
@@ -75,7 +75,7 @@ namespace ContactList.Test
             //use the password generator to create a random username, we'll fill the user with that
             string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
 
-            AppUser user = new AppUser
+            Register user = new Register
             {
                 UserName = testname,
                 Password = testname,
@@ -92,7 +92,7 @@ namespace ContactList.Test
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    DtoBase contactReturn = ContactManager.AddContact(new ContactRow
+                    DtoBase contactReturn = ContactManager.AddContact(new ContactAddEdit
                     {
                         UserName = testname,
                         FirstName = "first name",
@@ -122,7 +122,7 @@ namespace ContactList.Test
                 AppSettings.Initialize();
             }
 
-            List<AppUser> users = AppUserManager.GetUsers(100);
+            List<Register> users = AppUserManager.GetUsers(100);
 
             bool wasExceptionThrown = false;
             var threads = new Thread[users.Count];
@@ -134,9 +134,9 @@ namespace ContactList.Test
                         try
                         {
                             Random rnd = new Random();
-                            AppUser user = users[rnd.Next(0, users.Count - 1)];
+                            Register user = users[rnd.Next(0, users.Count - 1)];
 
-                            DtoBase contactReturn = ContactManager.AddContact(new ContactRow
+                            DtoBase contactReturn = ContactManager.AddContact(new ContactAddEdit
                             {
                                 UserName = user.UserName,
                                 FirstName = "first name",

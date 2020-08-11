@@ -16,7 +16,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">populated AppUser dto object</param>
         /// <returns>AppUserReturn to populate user session informationt</returns>
-        public static AppUserReturn CreateUser(AppUser user)
+        public static AppUserReturn CreateUser(Register user)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">AppUser object</param>
         /// <returns>DtoBase of success/fail with message</returns>
-        public static DtoBase UpdateUser(AppUser user)
+        public static DtoBase UpdateUser(Update user)
         {
             try
             {
@@ -245,9 +245,9 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="userCount">int number of users to be returned</param>
         /// <returns>List of N AppUsers</returns>
-        public static List<AppUser> GetUsers(int userCount)
+        public static List<Register> GetUsers(int userCount)
         {
-            List<AppUser> users = new List<AppUser>();
+            List<Register> users = new List<Register>();
 
             try
             {
@@ -260,7 +260,7 @@ namespace ContactList.Business
                 {
                     foreach (DataRow row in dt.Rows)
                     {
-                        users.Add(new AppUser
+                        users.Add(new Register
                         {
                             UserId = (Guid)row["UserId"],
                             UserName = (string)row["UserName"]

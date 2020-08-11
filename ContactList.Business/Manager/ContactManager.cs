@@ -15,9 +15,9 @@ namespace ContactList.Business
         /// <summary>
         /// Adds contact row to users's contact datatable
         /// </summary>
-        /// <param name="contact">ContactRow with contact data</param>
+        /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoBase AddContact(ContactRow contact)
+        public static DtoBase AddContact(ContactAddEdit contact)
         {
             if(string.IsNullOrWhiteSpace(contact.UserName))
             {
@@ -86,9 +86,9 @@ namespace ContactList.Business
         /// <summary>
         /// Edits a contact row in users's contact datatable
         /// </summary>
-        /// <param name="contact">ContactRow with contact data</param>
+        /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoBase EditContact(ContactRow contact)
+        public static DtoBase EditContact(ContactAddEdit contact)
         {
             if (string.IsNullOrWhiteSpace(contact.UserName))
             {
@@ -225,7 +225,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object for data transfer of username</param>
         /// <returns>DtoBase with error message or count of users in message</returns>
-        public static DtoBase GetContactCount(ContactGet getter)
+        public static DtoBase GetContactCount(CountGet getter)
         {
             if (string.IsNullOrWhiteSpace(getter.UserName))
             {
@@ -257,7 +257,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object with desired params</param>
         /// <returns>List of found ContactRow objects</returns>
-        public static List<ContactRow> GetContacts(ContactGet getter)
+        public static List<ContactRow> GetContacts(ListSelect getter)
         {
             List<ContactRow> contacts = new List<ContactRow>();
 

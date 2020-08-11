@@ -35,7 +35,7 @@ export class ContactListComponent implements OnInit {
   initContacts() {
     if (this.authService.userData !== null && this.authService.userData.userId !== null) {
       var params = { userName: this.authService.userData.userName };
-      this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'ContactCount', params).subscribe(res => {
+      this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/Count', params).subscribe(res => {
           if (!res.hasErrors) {
             this.contactCount = parseInt(res.dtoMessage);
             this.config.totalItems = this.contactCount;
@@ -51,7 +51,7 @@ export class ContactListComponent implements OnInit {
 
   loadPagedContacts() {
     var params = { userName: this.authService.userData.userName, utcOffset: this.authService.userData.utcOffset, rowsPerPage: this.config.itemsPerPage, pageNumber: this.config.currentPage };
-    this.http.post<ContactRow[]>(environment.apiUrl + 'ContactList', params).subscribe(res => {
+    this.http.post<ContactRow[]>(environment.apiUrl + 'Contact/List', params).subscribe(res => {
         this.contacts = res;
     },
       error => console.error(error)
@@ -77,7 +77,7 @@ export class ContactListComponent implements OnInit {
   deleteContact(i) {
     var contact = this.contacts[i];
     contact.userName = this.authService.userData.userName;
-    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'ContactDelete', contact).subscribe(res => {
+    this.http.post<ApiResult.ApiReturn>(environment.apiUrl + 'Contact/Delete', contact).subscribe(res => {
       if (res.hasErrors) {
         alert(res.dtoMessage);
       } else {
