@@ -33,7 +33,7 @@ namespace ContactList.Test
                         {
                             //use the password generator to create a random username, we'll fill the user with that
                             string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
-                            AppUserManager.CreateUser(new Register
+                            AppUserManager.CreateUser(new InputUserRegister
                             {
                                 UserName = testname,
                                 Password = testname,
@@ -75,7 +75,7 @@ namespace ContactList.Test
             //use the password generator to create a random username, we'll fill the user with that
             string testname = PasswordGenerator.GeneratePassword(8, PasswordStrengths.AlphaOnly);
 
-            Register user = new Register
+            InputUserRegister user = new InputUserRegister
             {
                 UserName = testname,
                 Password = testname,
@@ -84,7 +84,7 @@ namespace ContactList.Test
                 EmailAddress = "test@tester.com"
             };
 
-            DtoReturnObject<AppUserReturn> createReturn = AppUserManager.CreateUser(user);
+            DtoReturnObject<OutputUserBase> createReturn = AppUserManager.CreateUser(user);
 
             wasExceptionThrown = createReturn.HasErrors;
 
@@ -92,7 +92,7 @@ namespace ContactList.Test
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    DtoReturnBase contactReturn = ContactManager.AddContact(new ContactAddEdit
+                    DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                     {
                         UserName = testname,
                         FirstName = "first name",
@@ -122,7 +122,7 @@ namespace ContactList.Test
                 AppSettings.Initialize();
             }
 
-            List<Register> users = AppUserManager.GetUsers(100);
+            List<InputUserRegister> users = AppUserManager.GetUsers(100);
 
             bool wasExceptionThrown = false;
             var threads = new Thread[users.Count];
@@ -134,9 +134,9 @@ namespace ContactList.Test
                         try
                         {
                             Random rnd = new Random();
-                            Register user = users[rnd.Next(0, users.Count - 1)];
+                            InputUserRegister user = users[rnd.Next(0, users.Count - 1)];
 
-                            DtoReturnBase contactReturn = ContactManager.AddContact(new ContactAddEdit
+                            DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                             {
                                 UserName = user.UserName,
                                 FirstName = "first name",

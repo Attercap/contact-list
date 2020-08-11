@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ContactList.Business
 {
-    public class ListSelect
+    public class InputContactListSelect
     {
         public string UserName { get; set; }
         public int UtcOffset { get; set; }

@@ -10,7 +10,7 @@ namespace ContactList.Api
         // POST: api/AppUser/Register
         [HttpPost]
         [Route("Register")]
-        public DtoReturnObject<AppUserReturn> Post([FromBody] Register user)
+        public DtoReturnObject<OutputUserBase> Post([FromBody] InputUserRegister user)
         {
             return AppUserManager.CreateUser(user);
         }
@@ -18,7 +18,7 @@ namespace ContactList.Api
         // POST: api/AppUser/Login
         [HttpPost]
         [Route("Login")]
-        public DtoReturnObject<AppUserReturn> Post([FromBody] AppUserLogin appUser)
+        public DtoReturnObject<OutputUserBase> Post([FromBody] InputUserLogin appUser)
         {
             return AppUserManager.LoginUser(appUser);
         }
@@ -26,7 +26,7 @@ namespace ContactList.Api
         // POST: api/AppUser/Update
         [HttpPost]
         [Route("Update")]
-        public DtoReturnBase Post([FromBody] Update appUser)
+        public DtoReturnBase Post([FromBody] InputUpdate appUser)
         {
             return AppUserManager.UpdateUser(appUser);
         }

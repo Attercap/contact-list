@@ -5,12 +5,13 @@ using System.Text;
 namespace ContactList.Business
 {
     /// <summary>
-    /// Data transfer object add/edit contact rows
+    /// Data transfer object for contact list rows
     /// </summary>
-    public class ContactAddEdit
+    public class OutputContactRecord
     {
         public Guid ContactId { get; set; }
         public string UserName { get; set; }
+        public int UtcOffset { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
@@ -20,5 +21,6 @@ namespace ContactList.Business
         public string StateProvince { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
+        public string LastModifiedFormatted { get; set; }
     }
 }

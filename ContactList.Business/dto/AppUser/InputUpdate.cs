@@ -7,7 +7,7 @@ namespace ContactList.Business
     /// <summary>
     /// Data Transfer object for user registration/updates
     /// </summary>
-    public class Update
+    public class InputUpdate
     {
         public Guid UserId { get; set; }
         public string Password { get; set; }

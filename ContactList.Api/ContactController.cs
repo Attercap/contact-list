@@ -12,7 +12,7 @@ namespace ContactList.Api
 
         [HttpPost]
         [Route("Count")]
-        public DtoReturnBase Post([FromBody] CountGet getter)
+        public DtoReturnBase Post([FromBody] InputContactCountGet getter)
         {
             return ContactManager.GetContactCount(getter);
         }
@@ -20,7 +20,7 @@ namespace ContactList.Api
         // POST: api/Contact/List
         [HttpPost]
         [Route("List")]
-        public DtoReturnObject<List<ContactRow>> Post([FromBody] ListSelect getter)
+        public DtoReturnObject<List<OutputContactRecord>> Post([FromBody] InputContactListSelect getter)
         {
             return ContactManager.GetContacts(getter);
         }
@@ -28,7 +28,7 @@ namespace ContactList.Api
         // POST: api/Contact/AddEdit
         [HttpPost]
         [Route("AddEdit")]
-        public DtoReturnBase Post([FromBody] ContactAddEdit contact)
+        public DtoReturnBase Post([FromBody] InputContactRecord contact)
         {
             if (contact.ContactId == null || contact.ContactId == Guid.Empty)
             {
@@ -41,7 +41,7 @@ namespace ContactList.Api
         // POST: api/Contact/Delete
         [HttpPost]
         [Route("Delete")]
-        public DtoReturnBase Post([FromBody] ContactRow contact)
+        public DtoReturnBase Post([FromBody] OutputContactRecord contact)
         {
             return ContactManager.DeleteContact(contact);
         }

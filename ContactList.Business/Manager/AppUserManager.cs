@@ -16,7 +16,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">populated AppUser dto object</param>
         /// <returns>DtoReturnObject with AppUserReturn to populate user session information</returns>
-        public static DtoReturnObject<AppUserReturn> CreateUser(Register user)
+        public static DtoReturnObject<OutputUserBase> CreateUser(InputUserRegister user)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteScalarInt(checkUser, checkParms) > 0)
                 {
-                    return new DtoReturnObject<AppUserReturn>(true, "This User Name already exists in the system. Please try again.", null);
+                    return new DtoReturnObject<OutputUserBase>(true, "This User Name already exists in the system. Please try again.", null);
                 }
 
 
@@ -56,16 +56,16 @@ namespace ContactList.Business
 
                     if (tableCreate.HasErrors)
                     {
-                        return new DtoReturnObject<AppUserReturn>(tableCreate.HasErrors, tableCreate.DtoMessage, null);
+                        return new DtoReturnObject<OutputUserBase>(tableCreate.HasErrors, tableCreate.DtoMessage, null);
                     }
                 }
                 else
                 {
-                    return new DtoReturnObject<AppUserReturn>(true, "Could not create user record.", null);
+                    return new DtoReturnObject<OutputUserBase>(true, "Could not create user record.", null);
                 }
 
-                return new DtoReturnObject<AppUserReturn>(false, string.Empty,
-                    new AppUserReturn
+                return new DtoReturnObject<OutputUserBase>(false, string.Empty,
+                    new OutputUserBase
                     {
                         UserId = user.UserId,
                         UserName = user.UserName,
@@ -77,7 +77,7 @@ namespace ContactList.Business
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
-                return new DtoReturnObject<AppUserReturn>(true, "An unknown error occured, please contact support.", null);
+                return new DtoReturnObject<OutputUserBase>(true, "An unknown error occured, please contact support.", null);
             }
         }
 
@@ -86,7 +86,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">AppUserLogin object for user/pass string</param>
         /// <returns>DtoReturnObject with AppUserReturn to populate common session data</returns>
-        public static DtoReturnObject<AppUserReturn> LoginUser(AppUserLogin user)
+        public static DtoReturnObject<OutputUserBase> LoginUser(InputUserLogin user)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace ContactList.Business
 
                 if (dt != null && !dt.HasErrors && dt.Rows.Count > 0)
                 {
-                    AppUserReturn appUserReturn = new AppUserReturn
+                    OutputUserBase appUserReturn = new OutputUserBase
                     {
                         UserId = (Guid)dt.Rows[0]["UserId"],
                         UserName = (string)dt.Rows[0]["UserName"],
@@ -123,21 +123,21 @@ namespace ContactList.Business
 
                     if (!DataConnection.ExecuteNonQuery(loginUser, loginParams))
                     {
-                        return new DtoReturnObject<AppUserReturn>(true, "A minor error occurred updating your login date.", null);
+                        return new DtoReturnObject<OutputUserBase>(true, "A minor error occurred updating your login date.", null);
                     }
 
-                    return new DtoReturnObject<AppUserReturn>(false, string.Empty, appUserReturn);
+                    return new DtoReturnObject<OutputUserBase>(false, string.Empty, appUserReturn);
                 }
                 else
                 {
-                    return new DtoReturnObject<AppUserReturn>(true, "Your username/password combination is incorrect.", null);
+                    return new DtoReturnObject<OutputUserBase>(true, "Your username/password combination is incorrect.", null);
                 }
             }
             catch (Exception ex)
             {
                 ErrorLog.LogError(ex);
 
-                return new DtoReturnObject<AppUserReturn>(true, "An unknown error occured, please contact support.", null);
+                return new DtoReturnObject<OutputUserBase>(true, "An unknown error occured, please contact support.", null);
             }
         }
 
@@ -146,7 +146,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="user">AppUser object</param>
         /// <returns>DtoBase of success/fail with message</returns>
-        public static DtoReturnBase UpdateUser(Update user)
+        public static DtoReturnBase UpdateUser(InputUpdate user)
         {
             try
             {
@@ -207,9 +207,9 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="userCount">int number of users to be returned</param>
         /// <returns>List of N AppUsers</returns>
-        public static List<Register> GetUsers(int userCount)
+        public static List<InputUserRegister> GetUsers(int userCount)
         {
-            List<Register> users = new List<Register>();
+            List<InputUserRegister> users = new List<InputUserRegister>();
 
             try
             {
@@ -222,7 +222,7 @@ namespace ContactList.Business
                 {
                     foreach (DataRow row in dt.Rows)
                     {
-                        users.Add(new Register
+                        users.Add(new InputUserRegister
                         {
                             UserId = (Guid)row["UserId"],
                             UserName = (string)row["UserName"]

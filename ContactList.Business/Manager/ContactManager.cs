@@ -17,7 +17,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoReturnBase AddContact(ContactAddEdit contact)
+        public static DtoReturnBase AddContact(InputContactRecord contact)
         {
             if(string.IsNullOrWhiteSpace(contact.UserName))
             {
@@ -88,7 +88,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactEdit with contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoReturnBase EditContact(ContactAddEdit contact)
+        public static DtoReturnBase EditContact(InputContactRecord contact)
         {
             if (string.IsNullOrWhiteSpace(contact.UserName))
             {
@@ -167,7 +167,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="contact">ContactRow with base contact data</param>
         /// <returns>DtoBase with any error messaging</returns>
-        public static DtoReturnBase DeleteContact(ContactRow contact)
+        public static DtoReturnBase DeleteContact(OutputContactRecord contact)
         {
             if (string.IsNullOrWhiteSpace(contact.UserName))
             {
@@ -225,7 +225,7 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object for data transfer of username</param>
         /// <returns>DtoBase with error message or count of users in message</returns>
-        public static DtoReturnBase GetContactCount(CountGet getter)
+        public static DtoReturnBase GetContactCount(InputContactCountGet getter)
         {
             if (string.IsNullOrWhiteSpace(getter.UserName))
             {
@@ -257,14 +257,14 @@ namespace ContactList.Business
         /// </summary>
         /// <param name="getter">ContactGet object with desired params</param>
         /// <returns>List of found ContactRow objects</returns>
-        public static DtoReturnObject<List<ContactRow>> GetContacts(ListSelect getter)
+        public static DtoReturnObject<List<OutputContactRecord>> GetContacts(InputContactListSelect getter)
         {
             if (string.IsNullOrWhiteSpace(getter.UserName))
             {
-                return new DtoReturnObject<List<ContactRow>>(true, "Usename missing from transaction, please log in.", null);
+                return new DtoReturnObject<List<OutputContactRecord>>(true, "Usename missing from transaction, please log in.", null);
             }
 
-            List<ContactRow> contacts = new List<ContactRow>();
+            List<OutputContactRecord> contacts = new List<OutputContactRecord>();
 
             string contactSelect = "select * from" +
                 " (select row_number() over (order by LastName) as RowNum, *" +
@@ -283,7 +283,7 @@ namespace ContactList.Business
                 {
                     foreach (DataRow row in dt.Rows)
                     {
-                        contacts.Add(new ContactRow
+                        contacts.Add(new OutputContactRecord
                         {
                             ContactId = (Guid)row["ContactId"],
                             FirstName = (string)row["FirstName"],
@@ -302,10 +302,10 @@ namespace ContactList.Business
             } catch(Exception ex)
             {
                 ErrorLog.LogError(ex);
-                return new DtoReturnObject<List<ContactRow>>(true,"An error occured accessing your contacts, please contact administration.",null);
+                return new DtoReturnObject<List<OutputContactRecord>>(true,"An error occured accessing your contacts, please contact administration.",null);
             }
 
-            return new DtoReturnObject<List<ContactRow>>(false, string.Empty, contacts);
+            return new DtoReturnObject<List<OutputContactRecord>>(false, string.Empty, contacts);
         }
 
         /// <summary>
