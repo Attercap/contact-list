@@ -14,14 +14,14 @@ export class ContactEditComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public router: Router,
-    public currentContact: ApiDto.ContactInputUpdate,
+    public currentContact: ApiDto.ContactOutputData,
     private http: HttpClient
   ) {
     this.authService = authService;
     if (sessionStorage.getItem('currentContact') != null) {
       this.currentContact = JSON.parse(sessionStorage.getItem('currentContact'));
     } else {
-      this.currentContact = new ApiDto.ContactInputUpdate(null,this.authService.userData.userId,'','','','','','','','','');
+      this.currentContact = new ApiDto.ContactOutputData();
     }
   }
 
@@ -58,6 +58,7 @@ export class ContactEditComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+
     this.currentContact.userId = this.authService.userData.userId;
     this.currentContact.firstName = this.model.firstname;
     this.currentContact.lastName = this.model.lastname;
@@ -68,7 +69,21 @@ export class ContactEditComponent implements OnInit {
     this.currentContact.stateProvince = this.model.stateprovince;
     this.currentContact.postalCode = this.model.postalcode;
     this.currentContact.country = this.model.country;
-    this.http.post<ApiDto.OutputBase>(environment.apiUrl + 'Contact/AddEdit', this.currentContact).subscribe(res => {
+
+    var contactParams = new ApiDto.ContactInputUpdate(
+      this.currentContact.contactId,
+      this.authService.userData.userId,
+      this.currentContact.firstName,
+      this.currentContact.lastName,
+      this.currentContact.emailAddress,
+      this.currentContact.streetAddress1,
+      this.currentContact.streetAddress2,
+      this.currentContact.city,
+      this.currentContact.stateProvince,
+      this.currentContact.postalCode,
+      this.currentContact.country
+    );
+    this.http.post<ApiDto.OutputBase>(environment.apiUrl + 'Contact/AddEdit', contactParams).subscribe(res => {
       this.success = !res.hasErrors;
       this.message = res.dtoMessage;
 

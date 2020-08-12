@@ -346,7 +346,7 @@ namespace ContactList.Business
                 return CreateContactTable(contactTableBaseName);
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>

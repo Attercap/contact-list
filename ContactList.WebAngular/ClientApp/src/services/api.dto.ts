@@ -1,5 +1,3 @@
-import { User } from "./auth.service";
-
 export module ApiDto {
   export class OutputBase {
     public hasErrors: boolean;
@@ -32,12 +30,12 @@ export module ApiDto {
   export class UserOutputBase {
     public hasErrors: boolean;
     public dtoMessage: string;
-    public userObject: OutputUser
+    public returnObject: UserOutputData
 
     constructor() {
       this.hasErrors = true;
       this.dtoMessage = 'Unknown error.';
-      this.userObject = new OutputUser();
+      this.returnObject = new UserOutputData();
     }
   }
 
@@ -89,18 +87,18 @@ export module ApiDto {
   export class ContactOutputBase {
     public hasErrors: boolean;
     public dtoMessage: string;
-    public contactList: OutputContactData[]
+    public returnObject: ContactOutputData[]
 
     constructor() {
       this.hasErrors = true;
       this.dtoMessage = 'Unknown error.';
-      this.contactList = new OutputContactData[];
+      this.returnObject = new ContactOutputData[0];
     }
   }
 
   export class ContactOutputData {
     public contactId: string;
-    public userName: string;
+    public userId: string;
     public firstName: string;
     public lastName: string;
     public emailAddress: string;
@@ -114,7 +112,7 @@ export module ApiDto {
 
     constructor() {
       this.contactId = null;
-      this.userName = '';
+      this.userId = '';
       this.firstName = '';
       this.lastName = '';
       this.emailAddress = '';

@@ -13,6 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactList.WebAngular", "C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1277D876-D265-4064-8B56-FF3E02DF8E11}"
 	ProjectSection(SolutionItems) = preProject
+		contact-table-update.sql = contact-table-update.sql
 		Sql\instantiate-sql.sql = Sql\instantiate-sql.sql
 	EndProjectSection
 EndProject

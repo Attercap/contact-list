@@ -155,7 +155,21 @@ namespace ContactList.Business
 
                 if (DataConnection.ExecuteScalarInt(checkUser, checkParms) > 0)
                 {
-                    //TODO: verify oldpassword is correct before updating new password
+                    if(!string.IsNullOrEmpty(user.NewPassword))
+                    {
+                        string checkPassword = "select * from AppUser where UserId = @userId and Password = @password";
+
+                        List<SqlParameter> passParams = new List<SqlParameter>
+                        {
+                            new SqlParameter("@userName", user.UserId),
+                            new SqlParameter("@password", StringUtil.HashPassword(user.OldPassword))
+                        };
+
+                        if(DataConnection.ExecuteScalarInt(checkPassword, passParams) == 0)
+                        {
+                            return new DtoReturnBase(true, "Old password must match current password.");
+                        }
+                    }
 
                     List<SqlParameter> updateParams = new List<SqlParameter>
                     {

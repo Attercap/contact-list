@@ -40,11 +40,11 @@ export class AuthService {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.userObject.userId;
-        this.userData.userName = res.userObject.userName.toLowerCase();
-        this.userData.email = res.userObject.emailAddress;
-        this.userData.firstName = res.userObject.firstName;
-        this.userData.lastName = res.userObject.lastName;
+        this.userData.userId = res.returnObject.userId;
+        this.userData.userName = res.returnObject.userName.toLowerCase();
+        this.userData.email = res.returnObject.emailAddress;
+        this.userData.firstName = res.returnObject.firstName;
+        this.userData.lastName = res.returnObject.lastName;
         this.userData.utcOffset = utcOffset;
  
         sessionStorage.setItem('user', JSON.stringify(this.userData));
@@ -83,11 +83,11 @@ export class AuthService {
       this.success = !res.hasErrors;
       if (this.success) {
         this.userData = new User();
-        this.userData.userId = res.userObject.userId;
-        this.userData.userName = res.userObject.userName.toLowerCase();
-        this.userData.email = res.userObject.emailAddress;
-        this.userData.firstName = res.userObject.firstName;
-        this.userData.lastName = res.userObject.lastName;
+        this.userData.userId = res.returnObject.userId;
+        this.userData.userName = res.returnObject.userName.toLowerCase();
+        this.userData.email = res.returnObject.emailAddress;
+        this.userData.firstName = res.returnObject.firstName;
+        this.userData.lastName = res.returnObject.lastName;
         this.userData.utcOffset = utcOffset;
         sessionStorage.setItem('user', JSON.stringify(this.userData));
         this.router.navigate(['/']);

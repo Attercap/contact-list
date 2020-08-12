@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace ContactList.Business
@@ -12,11 +13,11 @@ namespace ContactList.Business
     {
         [Required]
         public Guid UserId { get; set; }
-        [Required]
+        [Required, NotNull]
         public string FirstName { get; set; }
-        [Required]
+        [Required, NotNull]
         public string LastName { get; set; }
-        [Required]
+        [Required, NotNull]
         public string EmailAddress { get; set; }
         [Required]
         public string OldPassword { get; set; }

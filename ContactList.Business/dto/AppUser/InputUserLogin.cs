@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ContactList.Business
 {
@@ -7,9 +8,9 @@ namespace ContactList.Business
     /// </summary>
     public class InputUserLogin
     {
-        [Required]
+        [Required, NotNull]
         public string UserName { get; set; }
-        [Required]
+        [Required, NotNull]
         public string Password { get; set; }
     }
 }

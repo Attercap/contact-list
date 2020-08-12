@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 import { AuthService } from "../services/auth.service";
-import { ContactRow } from '../services/contact.service';
+import { ApiDto } from '../services/api.dto';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -46,7 +46,7 @@ import { ContactEditComponent } from './contact-edit/contact-edit.component';
       { path: 'contact-edit', component: ContactEditComponent },
     ])
   ],
-  providers: [AuthService, ContactRow],
+  providers: [AuthService, ApiDto.ContactOutputData],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

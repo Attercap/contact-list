@@ -53,7 +53,7 @@ export class ContactListComponent implements OnInit {
     var pagedContactParams = new ApiDto.ContactInputGetList(this.authService.userData.userId, this.authService.userData.utcOffset, this.config.currentPage, this.config.itemsPerPage);
     this.http.post<ApiDto.ContactOutputBase>(environment.apiUrl + 'Contact/List', pagedContactParams).subscribe(res => {
       if (!res.hasErrors) {
-        this.contacts = res.contactList;
+        this.contacts = res.returnObject;
       }
       else {
         alert(res.dtoMessage);
@@ -71,12 +71,13 @@ export class ContactListComponent implements OnInit {
 
   editContact(i) {
     var contact = this.contacts[i];
+      this.contacts[i];
     sessionStorage.setItem('currentContact', JSON.stringify(contact));
     this.router.navigate(['/contact-edit']);
   }
 
   addContact() {
-    sessionStorage.setItem('currentContact', JSON.stringify(new ApiDto.ContactInputUpdate(null, this.authService.userData.userId,'','','','','','','','','')));
+    sessionStorage.setItem('currentContact', JSON.stringify(new ApiDto.ContactOutputData()));
     this.router.navigate(['/contact-add']);
   }
 

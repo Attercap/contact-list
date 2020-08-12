@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ContactList.Test
 {
-    public class Tests
+    public class StressTests
     {
         [SetUp]
         public void Setup()
@@ -85,6 +85,7 @@ namespace ContactList.Test
             };
 
             DtoReturnObject<OutputUserBase> createReturn = AppUserManager.CreateUser(user);
+ 
 
             wasExceptionThrown = createReturn.HasErrors;
 
@@ -94,6 +95,7 @@ namespace ContactList.Test
                 {
                     DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                     {
+                        UserId = createReturn.ReturnObject.UserId,
                         FirstName = "first name",
                         LastName = "last name" + i.ToString(),
                         EmailAddress = "test@testing.com",
@@ -137,6 +139,7 @@ namespace ContactList.Test
 
                             DtoReturnBase contactReturn = ContactManager.AddContact(new InputContactRecord
                             {
+                                UserId = user.UserId,
                                 FirstName = "first name",
                                 LastName = "last name",
                                 EmailAddress = "test@testing.com",
