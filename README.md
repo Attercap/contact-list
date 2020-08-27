@@ -14,3 +14,11 @@ NuGet Packages and node_modules not included in project, make sure to following 
 3. You should now be set to run an IIS Express development preview of the Web project
 
 This is a basic "proof of concept" project and while it does work, there may be bugs and it's not protected from all possible user errors.
+
+SQL is currently in-line for "ease of read"/code dissemination. In a working project would be Stored Proc.
+
+Next steps:
+1. Code clean-up/patternization of dtos (especially contact list /w proper messaging in case of error)
+2. Change username-based created contact tables to guid-based (with script to automate existing table updates)
+
+(see feature/code-cleanup branch for next steps progress)
