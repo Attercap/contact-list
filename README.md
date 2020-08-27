@@ -1,7 +1,7 @@
 # contact-list
 .Net Core 3 / Angular 8 simple contact list with architecture for bulk users &amp; records
 
-Currently set as "development mode" project only
+Currently set as "development mode"/"proof of concept" project only
 
 Requires SQL Server 2012 (or higher). Create your database and run the SQL\instantiate-sql.sql script.
 Update appsettings.json in ContactList.WebAngular and ContactList.Test with your connection info.
@@ -16,9 +16,3 @@ NuGet Packages and node_modules not included in project, make sure to following 
 This is a basic "proof of concept" project and while it does work, there may be bugs and it's not protected from all possible user errors.
 
 SQL is currently in-line for "ease of read"/code dissemination. In a working project would be Stored Proc.
-
-Next steps:
-1. Code clean-up/patternization of dtos (especially contact list /w proper messaging in case of error)
-2. Change username-based created contact tables to guid-based (with script to automate existing table updates)
-
-(see feature/code-cleanup branch for next steps progress)
